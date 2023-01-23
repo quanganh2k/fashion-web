@@ -18,6 +18,11 @@ const ProductSizeColorSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "colors",
     },
+    images: [
+      {
+        type: String,
+      },
+    ],
   },
   { timestamps: true }
 );

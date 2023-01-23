@@ -43,12 +43,12 @@ router.get("/", async (req, res) => {
       };
     }
 
+    results.totalData = total;
     results.pageCount = Math.ceil(total / limit);
     results.data = await Category.find(filters)
       .limit(limit)
       .skip(startIndex)
       .exec();
-    
 
     res.json({ success: true, results: results });
   } catch (error) {
