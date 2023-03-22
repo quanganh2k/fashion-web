@@ -48,13 +48,12 @@ router.post(
           .status(400)
           .json({ success: false, message: "Please upload image" });
       } else {
-        console.log(req.file);
         const image = req.file.path.replace(/\\/g, "/");
 
         const uploadResponse = await cloudinary.uploader.upload(image, {
           folder: "fashionShop",
         });
-        console.log("__a", uploadResponse);
+
         if (uploadResponse) {
           const newImage = new Image({
             image: uploadResponse,

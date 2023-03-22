@@ -35,19 +35,22 @@ router.post("/register", async (req, res) => {
     });
     await newUser.save();
 
-    const accessToken = createAccessToken({ id: newUser._id });
-    const refreshToken = createRefreshToken({ id: newUser._id });
+    // const accessToken = createAccessToken({ id: newUser._id });
+    // const refreshToken = createRefreshToken({ id: newUser._id });
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      path: "/api/auth/refresh_token",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   path: "/api/auth/refresh_token",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    // });
+
+    const plainUser = newUser.toJSON();
+    delete plainUser.password;
 
     res.json({
       success: true,
       message: "Register successfully",
-      accessToken,
+      user: plainUser,
     });
   } catch (error) {
     console.log(error);
@@ -81,11 +84,21 @@ router.post("/login", async (req, res) => {
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      path: "/api/auth/refresh_token",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      // path: "/api/auth/refresh_token",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days,
+      // sameSite: "none",
+      // secure: false
     });
 
-    res.json({ success: true, message: "Login successfully", accessToken });
+    const plainUser = user.toJSON();
+    delete plainUser.password;
+
+    res.json({
+      success: true,
+      message: "Login successfully",
+      accessToken,
+      user: plainUser,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -94,7 +107,7 @@ router.post("/login", async (req, res) => {
 //! API Logout
 router.get("/logout", async (req, res) => {
   try {
-    res.clearCookie("refreshToken", { path: "/api/auth/refresh_token" });
+    res.clearCookie("refreshToken", { httpOnly: true });
     res.json({ success: true, message: "Logged out" });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -105,7 +118,6 @@ router.get("/logout", async (req, res) => {
 router.get("/refresh_token", (req, res) => {
   try {
     const rfToken = req.cookies.refreshToken;
-
     if (!rfToken) {
       return res
         .status(400)
@@ -144,7 +156,7 @@ router.get("/user_info", auth, async (req, res) => {
 });
 
 const createAccessToken = (user) => {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "10m" });
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
 };
 
 const createRefreshToken = (user) => {

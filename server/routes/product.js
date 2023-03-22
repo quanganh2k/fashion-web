@@ -6,7 +6,7 @@ const authAdmin = require("../middleware/authAdmin");
 const Product = require("../models/Product");
 
 //! API Get all products
-router.get("/", async (req, res) => {
+router.get("/", auth, authAdmin, async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
@@ -59,14 +59,14 @@ router.get("/", async (req, res) => {
 
 //! API Get product details
 router.get("/:id", async (req, res) => {
-    try {
-        const id = req.params.id
-        const product = await Product.findById(id)
-        res.json({success: true, product})
-    } catch (error) {
-        return res.status(500).json({ success: false, message: error.message });
-    }
-})
+  try {
+    const id = req.params.id;
+    const product = await Product.findById(id);
+    res.json({ success: true, product });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 //! API Create Product
 router.post("/", auth, authAdmin, async (req, res) => {
