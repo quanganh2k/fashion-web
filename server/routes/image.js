@@ -40,29 +40,51 @@ router.post(
   "/upload",
   auth,
   authAdmin,
-  upload.single("image"),
+  upload.array("image"),
   async (req, res) => {
     try {
-      if (!req.file) {
+     
+      if (!req.files) {
         return res
           .status(400)
           .json({ success: false, message: "Please upload image" });
       } else {
-        const image = req.file.path.replace(/\\/g, "/");
-
-        const uploadResponse = await cloudinary.uploader.upload(image, {
-          folder: "fashionShop",
-        });
-
-        if (uploadResponse) {
-          const newImage = new Image({
-            image: uploadResponse,
+        const files = req.files
+        console.log("__REQ", req.files)
+        let arrImages = []
+        for(const file of files) {
+          const image = file.path.replace(/\\/g, "/")
+          const uploadResponse = await cloudinary.uploader.upload(image, {
+            folder: "fashionShop",
           });
+          arrImages.push({name: file.originalname, url: uploadResponse})
+        }
+        // const image = req.file.path.replace(/\\/g, "/");
+
+        // const uploadResponse = await cloudinary.uploader.upload(image, {
+        //   folder: "fashionShop",
+        // });
+
+        console.log("___arrIMG", arrImages)
+
+        if (Array.isArray(arrImages) && arrImages.length > 0) {
+          console.log("trueee")
+          const newImage = new Image({
+            image: arrImages,
+          });
+
+          console.log("__NWE", newImage)
           await newImage.save();
           res.json({
             success: true,
             message: "Create successfully",
-            image: newImage,
+            images: newImage,
+          });
+        }
+        else {
+          return res.status(400).json({
+            success: false,
+            message: "You need to upload image",
           });
         }
       }

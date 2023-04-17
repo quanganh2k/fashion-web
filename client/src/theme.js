@@ -5,7 +5,7 @@ const theme = createTheme({
     background: {
       card: "#f9f9f9",
       button: "#f76b6a",
-      buttonSecond: "##95bf47",
+      buttonSecond: "#95bf47",
       black: "#000",
       white: "#ffffff",
       footerBackground: "#fafafa"

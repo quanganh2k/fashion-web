@@ -11,6 +11,7 @@ const auth = (req, res, next) => {
         .json({ success: false, message: "Access token not found" });
     }
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+      console.log("error",err)
       if (err) {
         return res
           .status(400)

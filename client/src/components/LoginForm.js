@@ -74,7 +74,7 @@ const LoginForm = () => {
     await login(values.email, values.password);
     const infoLocal = authServices.getUserLocalStorage();
     if (infoLocal?.user?.role === 1) {
-      navigate(RouteBase.Dashboard);
+      navigate(RouteBase.Product);
     } else {
       navigate(RouteBase.Cart);
     }

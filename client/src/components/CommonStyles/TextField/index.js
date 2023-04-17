@@ -1,97 +1,93 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   IconButton,
   InputAdornment,
   TextField as TextFieldMui,
-} from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import {  getIn } from 'formik';
-import {  makeStyles } from '@mui/styles';
-import classNames from 'classnames';
-
-
+} from "@mui/material";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { getIn } from "formik";
+import { makeStyles } from "@mui/styles";
+import classNames from "classnames";
 
 const useStyles = makeStyles((theme) => {
   return {
     rootInput: {
-      display: 'flex',
-      flexDirection: 'column',
-      paddingLeft: '10',
+      // display: "flex",
+      // flexDirection: "column",
+      // paddingLeft: "10",
 
-      '& > label': {
+      "& > label": {
         marginBottom: 8,
         fontWeight: 600,
         // paddingLeft: '40px',
       },
 
-      '& .label-input': {
-        fontWeight: '600',
-        fontSize: '16px',
-        color: '#4d4d4d',
-        paddingLeft: '40px',
+      "& .label-input": {
+        fontWeight: "600",
+        fontSize: "16px",
+        color: "#4d4d4d",
+        paddingLeft: "40px",
       },
     },
 
     textField: {
-      width: '100%',
-      margin: '0 auto',
+      width: "100%",
+      margin: "0 auto",
 
-      '& div': {
-        borderRadius: '30px !important',
-        background: '#fff',
-       
+      "& div": {
+        borderRadius: "30px !important",
+        background: "#fff",
+        
 
-        '& fieldset': {},
-        '& input': {
-          padding: '18px 25px',
-          borderRadius: '30px !important',
-          
+        "& fieldset": {},
+        "& input": {
+          padding: "18px 25px",
+          borderRadius: "30px !important",
         },
-        '& input:-internal-autofill-selected': {
+        "& input:-internal-autofill-selected": {
           backgroundColor: "red !important",
-          color: "red !important"
-        }
+          color: "red !important",
+        },
       },
     },
 
     passwordInput: {
-      width: '100%',
-      margin: '0 auto',
+      width: "100%",
+      margin: "0 auto",
 
-      '& div': {
-        borderRadius: '30px !important',
-        background: '#E8F0FE',
-       
+      "& div": {
+        borderRadius: "30px !important",
+        background: "#E8F0FE",
 
-        '& fieldset': {},
-        '& input': {
-          padding: '18px 25px',
-          borderRadius: '30px !important',
+        "& fieldset": {},
+        "& input": {
+          padding: "18px 25px",
+          borderRadius: "30px !important",
         },
       },
     },
 
     textFieldMulti: {
-      width: '100%',
-      margin: '0 auto',
+      width: "100%",
+      margin: "0 auto",
 
-      '& div': {
-        borderRadius: '30px !important',
-        background: '#fff',
-        paddingLeft: '40px',
+      "& div": {
+        borderRadius: "30px !important",
+        background: "#fff",
+        paddingLeft: "40px",
 
-        '& fieldset': {},
-        '& input': {
-          borderRadius: '30px !important',
+        "& fieldset": {},
+        "& input": {
+          borderRadius: "30px !important",
         },
       },
     },
 
     inputStyle: {
-      '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
-        '-webkit-appearance': 'none',
-        display: 'none',
+      "&::-webkit-outer-spin-button, &::-webkit-inner-spin-button": {
+        "-webkit-appearance": "none",
+        display: "none",
       },
     },
   };
@@ -103,7 +99,7 @@ const TextField = (props) => {
   const {
     label,
     labelMui,
-    type = 'text',
+    type = "text",
     onKeyDown,
     fullWidth = false,
     field,
@@ -115,6 +111,7 @@ const TextField = (props) => {
     width,
     afterOnChange,
     rows,
+    InputProps,
     ...rest
   } = props;
   const [showPassword, setShowPassword] = React.useState(false);
@@ -129,15 +126,13 @@ const TextField = (props) => {
     setShowPassword((prev) => !prev);
   }, [setShowPassword]);
 
-  const handleMouseDownPassword = (
-    event
-  ) => {
+  const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
   const onCheckType = () => {
     if (showHidePassword) {
-      return showPassword ? 'text' : 'password';
+      return showPassword ? "text" : "password";
     }
     return type;
   };
@@ -174,14 +169,14 @@ const TextField = (props) => {
         className={classNames(
           props.multiline ? classes.textFieldMulti : classes.textField,
           showHidePassword ? classes.passwordInput : classes.textField,
-          className,
+          className
         )}
         onChange={handleChange}
         autoComplete="off"
         type={onCheckType()}
         InputProps={{
           classes: { input: classes.inputStyle },
-          autoComplete: 'off',
+          autoComplete: "off",
           endAdornment: showHidePassword && (
             <InputAdornment position="end">
               <IconButton
@@ -194,6 +189,7 @@ const TextField = (props) => {
               </IconButton>
             </InputAdornment>
           ),
+          ...InputProps,
         }}
         error={isTouched && Boolean(errorMessage)}
         helperText={isTouched && errorMessage}

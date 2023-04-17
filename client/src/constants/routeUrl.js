@@ -1,6 +1,8 @@
 export const RouteBase = {
     Login: "/login",
     Cart: "/cart",
-    Dashboard: "/admin/dashboard",
-    Register: "/register"
+    Product: "/admin/product",
+    Register: "/register",
+    CreateProduct: "/admin/product/create",
+    EditProduct: "/admin/product/edit/:id"
 }

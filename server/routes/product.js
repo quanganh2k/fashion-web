@@ -6,7 +6,7 @@ const authAdmin = require("../middleware/authAdmin");
 const Product = require("../models/Product");
 
 //! API Get all products
-router.get("/", auth, authAdmin, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
@@ -19,7 +19,7 @@ router.get("/", auth, authAdmin, async (req, res) => {
 
     const filters = {};
     if (name) {
-      filters.name = { $regex: name, $options: "$i" };
+      filters.name = { $regex: name, $options: "i" };
     }
 
     const allData = await Product.find(filters).exec();
@@ -44,12 +44,95 @@ router.get("/", auth, authAdmin, async (req, res) => {
       };
     }
 
+    results.page = page;
     results.totalData = total;
     results.pageCount = Math.ceil(total / limit);
-    results.data = await Product.find(filters)
-      .limit(limit)
-      .skip(startIndex)
-      .exec();
+    // results.data = await Product.find(filters)
+    //   .populate(["sizeColor.size", "category"])
+    //   .limit(limit)
+    //   .skip(startIndex)
+    //   .exec();
+
+   
+    
+    // console.log(
+    //   await Product.aggregate([
+    //     {
+    //       $project: {
+    //         _id: "$_id",
+    //         data: "$$ROOT",
+    //         images: {
+    //           $reduce: {
+    //             input: "$sizeColor",
+    //             initialValue: [],
+    //             in: {
+    //               $concatArrays: ["$$value", "$$this.images"],
+    //             },
+    //           },
+    //         },
+    //       },
+    //     },
+    //     {
+    //       $addFields: {
+    //         "data.images": "$images",
+    //       },
+    //     },
+    //     { $replaceRoot: { newRoot: "$data" } },
+    //   ])
+    // );
+
+   
+      results.data =  await Product.aggregate([
+        {
+          $match: {name: { $regex: name, $options: "i" }}
+        },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          }
+        },
+        {
+          $lookup: {
+            from: "colors",
+            localField: "sizeColor.color",
+            foreignField: "_id",
+            as: "colorDetails",
+          }
+        },
+        {
+          $lookup: {
+            from: "sizes",
+            localField: "sizeColor.size",
+            foreignField: "_id",
+            as: "sizeDetails",
+          }
+        },
+        {
+          $project: {
+            _id: "$_id",
+            data: "$$ROOT",
+            images: {
+              $reduce: {
+                input: "$sizeColor",
+                initialValue: [],
+                in: {
+                  $concatArrays: ["$$value", "$$this.images"],
+                },
+              },
+            },
+          },
+        },
+        {
+          $addFields: {
+            "data.images": "$images",
+          },
+        },
+        { $replaceRoot: { newRoot: "$data" } },
+      ])
+   
 
     res.json({ success: true, results: results });
   } catch (error) {
@@ -97,13 +180,15 @@ router.post("/", auth, authAdmin, async (req, res) => {
         !item.quantity ||
         !item.inStock ||
         !item.size ||
-        !item.color ||
-        !item.images ||
-        item.images.length == 0
+        !item.color
+        //  ||
+        // !
+        // item.images ||
+        // item.images.length == 0
       ) {
         return res.status(400).json({
           success: false,
-          message: "You need to fill full information11",
+          message: "You need to fill full information",
         });
       }
     }
@@ -150,13 +235,15 @@ router.put("/:id", auth, authAdmin, async (req, res) => {
         !item.quantity ||
         !item.inStock ||
         !item.size ||
-        !item.color ||
-        !item.images ||
-        item.images.length == 0
+        !item.color
+        //  ||
+        // !
+        // item.images ||
+        // item.images.length == 0
       ) {
         return res.status(400).json({
           success: false,
-          message: "You need to fill full information11",
+          message: "You need to fill full information",
         });
       }
     }

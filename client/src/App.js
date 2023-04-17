@@ -14,9 +14,11 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Cart from "./views/User/Cart";
 import UserRoutes from "./utils/UserRoutes";
 import AdminRoutes from "./utils/AdminRoutes";
-import Dashboard from "./views/Admin/Dashboard";
 import Register from "./views/Register";
 import Page404 from "./views/Page404";
+import CreateProduct from "./views/Admin/CreateProduct";
+import Product from "./views/Admin/Product";
+import EditProduct from "./views/Admin/EditProduct";
 
 const cache = createCache({
   key: "css",
@@ -49,15 +51,32 @@ function App() {
                 <Route element={<AdminRoutes />}>
                   <Route
                     exact
-                    path={`${RouteBase.Dashboard}`}
-                    element={<Dashboard />}
+                    path={`${RouteBase.Product}`}
+                    element={<Product />}
+                  />
+                  <Route
+                    exact
+                    path={`${RouteBase.CreateProduct}`}
+                    element={<CreateProduct />}
+                  />
+
+                  <Route
+                    exact
+                    path={`${RouteBase.EditProduct}`}
+                    element={<EditProduct />}
                   />
                 </Route>
-
+                {/* <Route element={<AdminRoutes />}>
+                  <Route
+                    exact
+                    path={`${RouteBase.CreateProduct}`}
+                    element={<CreateProduct />}
+                  />
+                </Route> */}
                 <Route element={<UserRoutes />}>
                   <Route exact path={`${RouteBase.Cart}`} element={<Cart />} />
                 </Route>
-                
+
                 <Route path="*" element={<Page404 />}></Route>
               </Routes>
             </Router>

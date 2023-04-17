@@ -6,6 +6,8 @@ const AdminRoutes = () => {
   const auth = useAuth();
   const { isLogged, userInfo } = auth;
 
+  console.log("aaa")
+
   return isLogged && userInfo.role === 1 ? (
     <Outlet />
   ) : (

@@ -15,12 +15,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const StyledButton = (props) => {
-  const { children, style, className, onClick, ...rest } = props;
+  const { children, style, className, onClick, loading, ...rest } = props;
   const classes = useStyles();
 
   return (
     <LoadingButton
       {...rest}
+      loading={loading}
       onClick={onClick}
       sx={{ ...style }}
       className={classNames(classes.root, className)}

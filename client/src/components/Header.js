@@ -216,10 +216,10 @@ const Header = () => {
             className={classes.text}
             sx={{ marginRight: "10px" }}
           >
-            Việt Nam
+            English
           </CommonStyles.Typography>
           <CommonStyles.Typography variant="h4" className={classes.text}>
-            VND
+            USD
           </CommonStyles.Typography>
         </Box>
       </Box>

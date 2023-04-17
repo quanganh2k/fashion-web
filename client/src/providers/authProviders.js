@@ -94,10 +94,10 @@ export const AuthProvider = ({ children }) => {
 
   //* Check Auth
   useEffect(() => {
-    const interval = setInterval(() => getToken(), 14 * 60 * 1000);
+    const interval = setInterval(() => getToken(), 12 * 60 * 1000);
     intervalRef.current = interval;
     return () => clearInterval(interval);
-  }, [getToken]);
+  }, []);
 
   // login
   const login = useCallback(
