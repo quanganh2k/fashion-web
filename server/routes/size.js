@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 
     const filters = {};
     if (productSize) {
-      filters.productSize = { $regex: productSize, $options: "$i" };
+      filters.productSize = { $regex: productSize, $options: "i" };
     }
 
     const allData = await Size.find(filters).exec();
@@ -44,6 +44,7 @@ router.get("/", async (req, res) => {
       };
     }
 
+    results.page = page;
     results.totalData = total;
     results.pageCount = Math.ceil(total / limit);
     results.data = await Size.find(filters)

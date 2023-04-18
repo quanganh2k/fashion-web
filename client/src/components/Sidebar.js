@@ -122,7 +122,7 @@ const Sidebar = () => {
 
           <li className={classes.listItem}>
             <NavLink
-              to='/2'
+              to={RouteBase.Size}
               className={({ isActive }) =>
                 isActive ? classes.active : classes.link
               }

@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 
     const filters = {};
     if (name) {
-      filters.name = { $regex: name, $options: "$i" };
+      filters.name = { $regex: name, $options: "i" };
     }
 
     const allData = await Classify.find(filters).exec();
@@ -44,6 +44,7 @@ router.get("/", async (req, res) => {
       };
     }
 
+    results.page = page;
     results.totalData = total;
     results.pageCount = Math.ceil(total / limit);
     results.data = await Classify.find(filters)

@@ -23,6 +23,7 @@ import { showError, showSuccess } from "../../helpers/toast";
 import { useDeleteAllProducts } from "../../hooks/product/useDeleteAllProducts";
 import useToggleDialog from "../../hooks/useToggleDialog";
 import Pagination from "@mui/material/Pagination";
+import { isArray } from "lodash";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -203,9 +204,12 @@ const Product = () => {
   };
 
   const handleSort = (selected, options) => {
-   
     setSearchParams(
-      createSearchParams({ page: 1, sortBy: selected ? selected.value : "", search })
+      createSearchParams({
+        page: 1,
+        sortBy: selected ? selected.value : "",
+        search,
+      })
     );
   };
 
@@ -213,25 +217,32 @@ const Product = () => {
     setSearchParams(createSearchParams({ page, search, sortBy }));
   };
 
-  
-
   const handleToggleModal = (id) => {
     toggleDelete();
     setIdDelete(id);
   };
 
-  
   const handleDelete = async () => {
     try {
-      await deleteProduct(idDelete);
-      await refetch();
-      toggleDelete();
-      showSuccess("Delete product successfully");
+      if (
+        initialFilters.page > 1 &&
+        isArray(rowDatas) &&
+        rowDatas.length === 1
+      ) {
+        await deleteProduct(idDelete);
+        toggleDelete();
+        navigate(`${RouteBase.Product}?page=${initialFilters.page - 1}`);
+        showSuccess("Delete product successfully");
+      } else {
+        await deleteProduct(idDelete);
+        await refetch();
+        toggleDelete();
+        showSuccess("Delete product successfully");
+      }
     } catch (error) {
       showError(error.response.data.message);
     }
   };
-
 
   const handleDeleteAll = async () => {
     try {

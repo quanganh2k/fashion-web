@@ -22,6 +22,9 @@ import EditProduct from "./views/Admin/EditProduct";
 import Category from "./views/Admin/Category";
 import CreateCategory from "./views/Admin/CreateCategory";
 import EditCategory from "./views/Admin/EditCategory";
+import Size from "./views/Admin/Size";
+import CreateSize from "./views/Admin/CreateSize";
+import EditSize from "./views/Admin/EditSize";
 
 const cache = createCache({
   key: "css",
@@ -82,6 +85,21 @@ function App() {
                     exact
                     path={`${RouteBase.EditCategory}`}
                     element={<EditCategory />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.Size}`}
+                    element={<Size />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.CreateSize}`}
+                    element={<CreateSize />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.EditSize}`}
+                    element={<EditSize />}
                   />
                 </Route>
                 {/* <Route element={<AdminRoutes />}>

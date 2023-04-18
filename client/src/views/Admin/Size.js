@@ -8,7 +8,6 @@ import Navbar from "../../components/Navbar";
 import { Box, InputAdornment, Grid, CircularProgress } from "@mui/material";
 import CommonStyles from "../../components/CommonStyles";
 import CommonIcons from "../../components/CommonIcons";
-import { useGetListCategories } from "../../hooks/category/useGetListCategories";
 import Pagination from "@mui/material/Pagination";
 import {
   createSearchParams,
@@ -17,9 +16,10 @@ import {
 } from "react-router-dom";
 import { RouteBase } from "../../constants/routeUrl";
 import useToggleDialog from "../../hooks/useToggleDialog";
-import { useDeleteCategory } from "../../hooks/category/useDeleteCategory";
-import { useDeleteAllCategories } from "../../hooks/category/useDeleteAllCategories";
 import { showError, showSuccess } from "../../helpers/toast";
+import { useGetListSizes } from "../../hooks/size/useGetListSizes";
+import { useDeleteSize } from "../../hooks/size/useDeleteSize";
+import { useDeleteAllSizes } from "../../hooks/size/useDeleteAllSizes";
 import { isArray } from "lodash";
 
 const useStyles = makeStyles(() => {
@@ -72,7 +72,7 @@ const useStyles = makeStyles(() => {
   };
 });
 
-const Category = () => {
+const Size = () => {
   //! State
   const classes = useStyles();
   const navigate = useNavigate();
@@ -81,13 +81,13 @@ const Category = () => {
   const initialValues = {
     search: searchParams?.get("search") || "",
   };
-  const header = ["ID", "Name", "Action"];
+  const header = ["ID", "Product size", "Action"];
   const [initialFilters, setInitialFilters] = useState({
     page: 1,
     limit: 10,
     search: "",
   });
-  const [dataCategory, setDataCategory] = useState([]);
+  const [dataSize, setDataSize] = useState([]);
 
   const page = searchParams?.get("page") || 1;
   const [totalPage, setTotalPage] = useState();
@@ -104,24 +104,24 @@ const Category = () => {
   } = useToggleDialog();
 
   const {
-    data: resListCategory,
+    data: resListSize,
     isLoading: isLoadingList,
     refetch,
-  } = useGetListCategories(initialFilters);
+  } = useGetListSizes(initialFilters);
 
-  const { isLoading: isLoadingDelete, mutateAsync: deleteCategory } =
-    useDeleteCategory();
-  const { isLoading: isLoadingDeleteAll, mutateAsync: deleteAllCategories } =
-    useDeleteAllCategories();
+  const { isLoading: isLoadingDelete, mutateAsync: deleteSize } =
+    useDeleteSize();
+  const { isLoading: isLoadingDeleteAll, mutateAsync: deleteAllSizes } =
+    useDeleteAllSizes();
 
-  const pageCount = !isLoadingList && resListCategory?.data?.results?.pageCount;
+  const pageCount = !isLoadingList && resListSize?.data?.results?.pageCount;
 
   //! Function
   useEffect(() => {
-    if (!isLoadingList && resListCategory?.data?.results?.data !== undefined) {
-      setDataCategory(resListCategory?.data?.results?.data);
+    if (!isLoadingList && resListSize?.data?.results?.data !== undefined) {
+      setDataSize(resListSize?.data?.results?.data);
     }
-  }, [resListCategory]);
+  }, [resListSize]);
 
   useEffect(() => {
     setInitialFilters({
@@ -141,18 +141,18 @@ const Category = () => {
     try {
       if (
         initialFilters.page > 1 &&
-        isArray(dataCategory) &&
-        dataCategory.length === 1
+        isArray(dataSize) &&
+        dataSize.length === 1
       ) {
-        await deleteCategory(idDelete);
+        await deleteSize(idDelete);
         toggleDelete();
-        navigate(`${RouteBase.Category}?page=${initialFilters.page - 1}`);
-        showSuccess("Delete category successfully");
+        navigate(`${RouteBase.Size}?page=${initialFilters.page - 1}`);
+        showSuccess("Delete size successfully");
       } else {
-        await deleteCategory(idDelete);
+        await deleteSize(idDelete);
         await refetch();
         toggleDelete();
-        showSuccess("Delete category successfully");
+        showSuccess("Delete size successfully");
       }
     } catch (error) {
       showError(error.response.data.message);
@@ -161,10 +161,10 @@ const Category = () => {
 
   const handleDeleteAll = async () => {
     try {
-      await deleteAllCategories();
+      await deleteAllSizes();
       await refetch();
       toggleDeleteAll();
-      showSuccess("Delete all categories successfully");
+      showSuccess("Delete all sizes successfully");
     } catch (error) {
       showError(error.response.data.message);
     }
@@ -176,15 +176,15 @@ const Category = () => {
 
   const renderTableBody = useCallback(
     () =>
-      dataCategory?.map((item, index) => {
+      dataSize?.map((item, index) => {
         return {
           id:
-            dataCategory.indexOf(item) +
+            dataSize.indexOf(item) +
             1 +
-            (resListCategory?.data?.results?.page - 1) * 10,
-          name: (
+            (resListSize?.data?.results?.page - 1) * 10,
+          productSize: (
             <CommonStyles.Typography variant="h4">
-              {item.name}
+              {item.productSize}
             </CommonStyles.Typography>
           ),
           action: (
@@ -193,7 +193,7 @@ const Category = () => {
                 <CommonIcons.Edit
                   className={classes.editIcon}
                   onClick={() =>
-                    navigate(`${RouteBase.Category}/edit/${item?._id}`)
+                    navigate(`${RouteBase.Size}/edit/${item?._id}`)
                   }
                 />
               </Box>
@@ -207,7 +207,7 @@ const Category = () => {
           ),
         };
       }),
-    [dataCategory]
+    [dataSize]
   );
 
   const onSubmit = (values, actions) => {
@@ -287,9 +287,9 @@ const Category = () => {
                         <CommonStyles.Button
                           variant="contained"
                           className={classes.btnAdd}
-                          onClick={() => navigate(RouteBase.CreateCategory)}
+                          onClick={() => navigate(RouteBase.CreateSize)}
                         >
-                          Add category
+                          Add size
                         </CommonStyles.Button>
                         <CommonStyles.Button
                           variant="contained"
@@ -306,7 +306,7 @@ const Category = () => {
             </Formik>
             <Box className={classes.wrapperListCategory}>
               <CommonStyles.Table header={header} body={renderTableBody()} />
-              {dataCategory.length > 0 && (
+              {dataSize.length > 0 && (
                 <Box
                   sx={{
                     display: "flex",
@@ -331,8 +331,8 @@ const Category = () => {
                   open={openDelete}
                   toggle={toggleDelete}
                   className={classes.contentModal}
-                  header={"Delete category"}
-                  content={"Do you want to delete this category ?"}
+                  header={"Delete size"}
+                  content={"Do you want to delete this size ?"}
                   footer={
                     <>
                       <CommonStyles.Button
@@ -360,8 +360,8 @@ const Category = () => {
                   open={openDeleteAll}
                   toggle={toggleDeleteAll}
                   className={classes.contentModal}
-                  header={"Delete product"}
-                  content={"Do you want to delete all category ?"}
+                  header={"Delete size"}
+                  content={"Do you want to delete all sizes ?"}
                   footer={
                     <>
                       <CommonStyles.Button
@@ -392,4 +392,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default Size;

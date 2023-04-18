@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 
     const filters = {};
     if (colorName) {
-      filters.colorName = { $regex: colorName, $options: "$i" };
+      filters.colorName = { $regex: colorName, $options: "i" };
     }
 
     const allData = await Color.find(filters).exec();
@@ -44,6 +44,7 @@ router.get("/", async (req, res) => {
       };
     }
 
+    results.page = page;
     results.totalData = total;
     results.pageCount = Math.ceil(total / limit);
     results.data = await Color.find(filters)
