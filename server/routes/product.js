@@ -11,6 +11,7 @@ router.get("/", async (req, res) => {
     const page = parseInt(req.query.page);
     const limit = parseInt(req.query.limit);
     const name = req.query.search;
+    const sortBy = req.query.sortBy;
 
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
@@ -47,92 +48,94 @@ router.get("/", async (req, res) => {
     results.page = page;
     results.totalData = total;
     results.pageCount = Math.ceil(total / limit);
-    // results.data = await Product.find(filters)
-    //   .populate(["sizeColor.size", "category"])
-    //   .limit(limit)
-    //   .skip(startIndex)
-    //   .exec();
 
-   
-    
-    // console.log(
-    //   await Product.aggregate([
-    //     {
-    //       $project: {
-    //         _id: "$_id",
-    //         data: "$$ROOT",
-    //         images: {
-    //           $reduce: {
-    //             input: "$sizeColor",
-    //             initialValue: [],
-    //             in: {
-    //               $concatArrays: ["$$value", "$$this.images"],
-    //             },
-    //           },
-    //         },
-    //       },
-    //     },
-    //     {
-    //       $addFields: {
-    //         "data.images": "$images",
-    //       },
-    //     },
-    //     { $replaceRoot: { newRoot: "$data" } },
-    //   ])
-    // );
+    let sort;
+    switch (sortBy) {
+      case "category":
+        sort = { "categorySingle.name": 1 };
+        break;
+      case "price":
+        sort = { price: 1 };
+        break;
+      case "name":
+        sort = { name: 1 };
+        break;
+      default:
+        break;
+    }
 
-   
-      results.data =  await Product.aggregate([
-        {
-          $match: {name: { $regex: name, $options: "i" }}
+    results.data = await Product.aggregate([
+      {
+        $match: { name: { $regex: name, $options: "i" } },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category",
         },
-        {
-          $lookup: {
-            from: "categories",
-            localField: "category",
-            foreignField: "_id",
-            as: "category",
-          }
+      },
+      {
+        $addFields: {
+          categorySingle: { $arrayElemAt: ["$category", 0] },
         },
-        {
-          $lookup: {
-            from: "colors",
-            localField: "sizeColor.color",
-            foreignField: "_id",
-            as: "colorDetails",
-          }
+      },
+      {
+        $sort: sortBy ? sort : { createdAt: -1 },
+      },
+      {
+        $skip: startIndex,
+      },
+      {
+        $limit: limit,
+      },
+      // {
+      //   $lookup: {
+      //     from: "categories",
+      //     localField: "category",
+      //     foreignField: "_id",
+      //     as: "category",
+      //   },
+      // },
+      {
+        $lookup: {
+          from: "colors",
+          localField: "sizeColor.color",
+          foreignField: "_id",
+          as: "colorDetails",
         },
-        {
-          $lookup: {
-            from: "sizes",
-            localField: "sizeColor.size",
-            foreignField: "_id",
-            as: "sizeDetails",
-          }
+      },
+      {
+        $lookup: {
+          from: "sizes",
+          localField: "sizeColor.size",
+          foreignField: "_id",
+          as: "sizeDetails",
         },
-        {
-          $project: {
-            _id: "$_id",
-            data: "$$ROOT",
-            images: {
-              $reduce: {
-                input: "$sizeColor",
-                initialValue: [],
-                in: {
-                  $concatArrays: ["$$value", "$$this.images"],
-                },
+      },
+      {
+        $project: {
+          _id: "$_id",
+          data: "$$ROOT",
+          images: {
+            $reduce: {
+              input: "$sizeColor",
+              initialValue: [],
+              in: {
+                $concatArrays: ["$$value", "$$this.images"],
               },
             },
           },
         },
-        {
-          $addFields: {
-            "data.images": "$images",
-          },
+      },
+      {
+        $addFields: {
+          "data.images": "$images",
         },
-        { $replaceRoot: { newRoot: "$data" } },
-      ])
-   
+      },
+      { $replaceRoot: { newRoot: "$data" } },
+    ]).collation({ locale: "en", caseLevel: true });
 
     res.json({ success: true, results: results });
   } catch (error) {

@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
 const Color = require("../models/Color");
+const Product = require("../models/Product");
 
 //! API get all colors
 router.get("/", async (req, res) => {
@@ -51,6 +52,17 @@ router.get("/", async (req, res) => {
       .exec();
 
     res.json({ success: true, results: results });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+//! API get color details
+router.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const color = await Color.findById(id);
+    res.json({ success: true, color });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -109,9 +121,29 @@ router.put("/:id", auth, authAdmin, async (req, res) => {
 });
 
 //! API delete color
-router.delete("/:id", auth, authAdmin, async (req, res) => {
+router.delete("/", auth, authAdmin, async (req, res) => {
   try {
-    const deletedColor = await Color.findByIdAndDelete(req.params.id);
+    let deletedColor;
+    if (req.query.id) {
+      const productColor = await Product.find({
+        "sizeColor.color": req.params.id,
+      });
+      for (let i = 0; i < productColor.length; i++) {
+        const product = productColor[i];
+        await Product.findByIdAndUpdate(product._id, {
+          $set: {
+            sizeColor: product.sizeColor.filter(
+              (item) => item.color.toString() !== req.params.id
+            ),
+          },
+        });
+      }
+      deletedColor = await Color.findByIdAndDelete(req.params.id);
+    } else {
+      await Product.deleteMany({});
+      deletedColor = await Color.deleteMany({});
+    }
+
     res.json({
       success: true,
       message: "Delete successfully",

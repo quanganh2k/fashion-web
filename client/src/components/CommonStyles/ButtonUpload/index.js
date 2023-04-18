@@ -20,11 +20,9 @@ const ButtonUpload = (props) => {
 
   const onSelectedFile =  (index,data,setFieldValue) => async (e) => {
     try {
-        console.log("multi",e.target, e.target.files, index)
       const target = e.target;
       const file = target.files;
       if(multiple) {
-        console.log("mmmm")
         if (file) {
           upload(file,index,data,setFieldValue);
           e.currentTarget.value = "";

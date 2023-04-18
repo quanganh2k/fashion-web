@@ -5,5 +5,6 @@ export const queryKeys = {
     categories: "categories",
     classify: 'classify',
     colors: 'colors',
-    sizes: 'sizes'
+    sizes: 'sizes',
+    categoryDetails: "categoryDetails"
 }

@@ -105,9 +105,14 @@ const Product = () => {
   //! State
   const classes = useStyles();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams?.get("page") || 1;
+  const [totalPage, setTotalPage] = useState();
+  const search = searchParams?.get("search") || "";
+  const sortBy = searchParams?.get("sortBy") || "";
   const initialValues = {
-    searchText: "",
-    sortBy: "",
+    search: searchParams?.get("search") || "",
+    sortBy: searchParams?.get("sortBy") || "",
   };
 
   const [initialFilters, setInitialFilters] = useState({
@@ -116,10 +121,6 @@ const Product = () => {
     search: "",
   });
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams?.get("page") || 1;
-  const [totalPage, setTotalPage] = useState();
-  const search = searchParams?.get("search") || "";
   const [idDelete, setIdDelete] = useState();
 
   const {
@@ -136,10 +137,9 @@ const Product = () => {
   const header = ["ID", "Name", "Image", "Price", "Size", "Category", "Action"];
 
   const sortOptions = [
+    { label: "Name", value: "name" },
+    { label: "Price", value: "price" },
     { label: "Category", value: "category" },
-    { label: "Size", value: "size" },
-    { label: "Color", value: "color" },
-    { label: "Classify", value: "classify" },
   ];
 
   const {
@@ -151,7 +151,6 @@ const Product = () => {
     useDeleteProduct();
   const { isLoading: isLoadingDeleteAll, mutateAsync: deleteAllProducts } =
     useDeleteAllProducts();
-  console.log("lis", resListProducts);
   const rowDatas =
     (!isLoadingList &&
       ProductModel.parseResponse(resListProducts?.data?.results?.data)) ||
@@ -188,41 +187,40 @@ const Product = () => {
 
   //! Function
   useEffect(() => {
-    console.log("in effect");
     setInitialFilters({
       ...initialFilters,
       page: Number(page),
       search: search,
+      sortBy: sortBy,
     });
     setTotalPage(pageCount);
-  }, [page, pageCount, search]);
+  }, [page, pageCount, search, sortBy]);
 
   const onSubmit = (values, actions) => {
-    console.log("values", values);
+    setSearchParams(
+      createSearchParams({ page: 1, search: values.search.trim(), sortBy })
+    );
+  };
+
+  const handleSort = (selected, options) => {
+   
+    setSearchParams(
+      createSearchParams({ page: 1, sortBy: selected ? selected.value : "", search })
+    );
   };
 
   const handleChangePage = (event, page) => {
-    console.log("oaaa", page);
-    setSearchParams(createSearchParams({ page, search }));
+    setSearchParams(createSearchParams({ page, search, sortBy }));
   };
 
-  console.log(
-    "page",
-    searchParams?.get("page"),
-    page,
-    initialFilters,
-    totalPage,
-    pageCount
-  );
-  console.log("render laiiii");
+  
 
   const handleToggleModal = (id) => {
     toggleDelete();
     setIdDelete(id);
   };
 
-  console.log("itemD", idDelete);
-
+  
   const handleDelete = async () => {
     try {
       await deleteProduct(idDelete);
@@ -234,13 +232,12 @@ const Product = () => {
     }
   };
 
-  console.log("row",rowDatas)
 
   const handleDeleteAll = async () => {
     try {
       await deleteAllProducts();
       await refetch();
-      toggleDeleteAll()
+      toggleDeleteAll();
       showSuccess("Delete all products successfully");
     } catch (error) {
       showError(error.response.data.message);
@@ -384,7 +381,7 @@ const Product = () => {
                               ),
                             }}
                             placeholder="Enter keywords"
-                            name="searchText"
+                            name="search"
                             className={classes.inputSearch}
                           />
                         </Grid>
@@ -392,6 +389,7 @@ const Product = () => {
                           <CommonStyles.Button
                             variant="contained"
                             className={classes.btn}
+                            type="submit"
                           >
                             Search
                           </CommonStyles.Button>
@@ -414,6 +412,9 @@ const Product = () => {
                             name="sortBy"
                             options={sortOptions}
                             className={classes.autocomplete}
+                            afterOnChange={(selected, options) =>
+                              handleSort(selected, options)
+                            }
                           />
                         </Grid>
                       </Grid>
@@ -493,7 +494,7 @@ const Product = () => {
                 }
               />
             )}
-             {shouldRenderDeleteAll && (
+            {shouldRenderDeleteAll && (
               <CommonStyles.Modal
                 open={openDeleteAll}
                 toggle={toggleDeleteAll}

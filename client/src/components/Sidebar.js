@@ -103,7 +103,7 @@ const Sidebar = () => {
           </li>
           <li className={classes.listItem}>
             <NavLink
-              to='/1'
+              to={RouteBase.Category}
               className={({ isActive }) =>
                 isActive ? classes.active : classes.link
               }

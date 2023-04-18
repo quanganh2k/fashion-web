@@ -22,7 +22,6 @@ const useStyles = makeStyles(() => {
 const FilePreview = ({ images, linkImages, onDeleteEachImage }) => {
   //! State
   const classes = useStyles();
-  console.log("in preview", images);
 
   //! Function
 
@@ -30,7 +29,6 @@ const FilePreview = ({ images, linkImages, onDeleteEachImage }) => {
   if (isArray(images) && images.length > 0) {
     return images?.map((el, index) => {
       const isLinkUrl = typeof el === "string";
-      console.log("isLinkUrl", isLinkUrl);
       return isLinkUrl ? (
         <div key={el} className={classes.wrapperImg}>
           <div>

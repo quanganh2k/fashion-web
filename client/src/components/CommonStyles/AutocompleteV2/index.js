@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => {
 
 const Autocomplete = (props) => {
   //! State
-  console.log("aa")
   const classes = useStyles();
   const {
     labelFieldName = 'label',

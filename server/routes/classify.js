@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
 const Classify = require("../models/Classify");
+const Product = require("../models/Product");
 
 //! API get all classify
 router.get("/", async (req, res) => {
@@ -51,6 +52,17 @@ router.get("/", async (req, res) => {
       .exec();
 
     res.json({ success: true, results: results });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+//! API get classify details
+router.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const classify = await Classify.findById(id);
+    res.json({ success: true, classify });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -110,9 +122,24 @@ router.put("/:id", auth, authAdmin, async (req, res) => {
 });
 
 //! API Delete classify
-router.delete("/:id", auth, authAdmin, async (req, res) => {
+router.delete("/", auth, authAdmin, async (req, res) => {
   try {
-    const deletedClassify = await Classify.findByIdAndDelete(req.params.id);
+    let deletedClassify;
+    if (req.query.id) {
+      const productClassify = await Product.find({ classify: req.query.id });
+
+      const listIdProduct = productClassify.map((el) => el._id);
+      await Product.deleteMany({
+        _id: {
+          $in: listIdProduct,
+        },
+      });
+      deletedClassify = await Classify.findByIdAndDelete(req.query.id);
+    } else {
+      await Product.deleteMany({});
+      deletedClassify = await Classify.deleteMany({});
+    }
+
     res.json({
       success: true,
       message: "Delete successfully",

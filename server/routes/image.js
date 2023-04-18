@@ -50,30 +50,22 @@ router.post(
           .json({ success: false, message: "Please upload image" });
       } else {
         const files = req.files
-        console.log("__REQ", req.files)
-        let arrImages = []
-        for(const file of files) {
-          const image = file.path.replace(/\\/g, "/")
-          const uploadResponse = await cloudinary.uploader.upload(image, {
-            folder: "fashionShop",
-          });
-          arrImages.push({name: file.originalname, url: uploadResponse})
-        }
+        const uploadResponses = await Promise.all(files.map(file => cloudinary.uploader.upload(file.path.replace(/\\/g, "/"), {
+          folder: "fashionShop",
+        })));
+        const arrImages = uploadResponses.map((uploadResponse, index) => ({name: files[index].originalname, url: uploadResponse}));
         // const image = req.file.path.replace(/\\/g, "/");
 
         // const uploadResponse = await cloudinary.uploader.upload(image, {
         //   folder: "fashionShop",
         // });
 
-        console.log("___arrIMG", arrImages)
 
         if (Array.isArray(arrImages) && arrImages.length > 0) {
-          console.log("trueee")
           const newImage = new Image({
             image: arrImages,
           });
 
-          console.log("__NWE", newImage)
           await newImage.save();
           res.json({
             success: true,

@@ -19,6 +19,9 @@ import Page404 from "./views/Page404";
 import CreateProduct from "./views/Admin/CreateProduct";
 import Product from "./views/Admin/Product";
 import EditProduct from "./views/Admin/EditProduct";
+import Category from "./views/Admin/Category";
+import CreateCategory from "./views/Admin/CreateCategory";
+import EditCategory from "./views/Admin/EditCategory";
 
 const cache = createCache({
   key: "css",
@@ -64,6 +67,21 @@ function App() {
                     exact
                     path={`${RouteBase.EditProduct}`}
                     element={<EditProduct />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.Category}`}
+                    element={<Category />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.CreateCategory}`}
+                    element={<CreateCategory />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.EditCategory}`}
+                    element={<EditCategory />}
                   />
                 </Route>
                 {/* <Route element={<AdminRoutes />}>

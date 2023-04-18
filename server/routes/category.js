@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
 const Category = require("../models/Category");
+const Product = require("../models/Product");
 
 //! API get all categories
 router.get("/", async (req, res) => {
@@ -18,7 +19,7 @@ router.get("/", async (req, res) => {
 
     const filters = {};
     if (name) {
-      filters.name = { $regex: name, $options: "$i" };
+      filters.name = { $regex: name, $options: "i" };
     }
 
     const allData = await Category.find(filters).exec();
@@ -42,7 +43,7 @@ router.get("/", async (req, res) => {
         limit: limit,
       };
     }
-
+    results.page = page;
     results.totalData = total;
     results.pageCount = Math.ceil(total / limit);
     results.data = await Category.find(filters)
@@ -51,6 +52,17 @@ router.get("/", async (req, res) => {
       .exec();
 
     res.json({ success: true, results: results });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+//! API Get category details
+router.get("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const category = await Category.findById(id);
+    res.json({ success: true, category });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -110,9 +122,25 @@ router.put("/:id", auth, authAdmin, async (req, res) => {
 });
 
 //! API Delete category
-router.delete("/:id", auth, authAdmin, async (req, res) => {
+router.delete("/", auth, authAdmin, async (req, res) => {
   try {
-    const deletedCategory = await Category.findByIdAndDelete(req.params.id);
+    let deletedCategory;
+    if (req.query.id) {
+      const productCategory = await Product.find({ category: req.query.id });
+
+      const listIdProduct = productCategory.map((el) => el._id);
+      await Product.deleteMany({
+        _id: {
+          $in: listIdProduct,
+        },
+      });
+
+      deletedCategory = await Category.findByIdAndDelete(req.query.id);
+    } else {
+      await Product.deleteMany({});
+      deletedCategory = await Category.deleteMany({});
+    }
+
     res.json({
       success: true,
       message: "Delete successfully",

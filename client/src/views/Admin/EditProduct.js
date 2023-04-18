@@ -86,7 +86,7 @@ const EditProduct = () => {
     page: 1,
     limit: 100,
   };
-  const { data: resProductDetails, isLoading: isLoadingDetail } =
+  const { data: resProductDetails, isLoading: isLoadingDetail, refetch: refetchDetail } =
     useGetProductDetails(params.id, { enabled: !!params.id });
 
   const dataProductDetails = !isLoadingDetail
@@ -224,7 +224,7 @@ const EditProduct = () => {
       }
 
       await editProduct({ id: params.id, data: trimValues });
-
+      await refetchDetail()
       showSuccess("Edit product successfully");
     } catch (error) {
       showError(error.response.data.message);
