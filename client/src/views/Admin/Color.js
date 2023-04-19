@@ -2,13 +2,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { makeStyles } from "@mui/styles";
 import { useTheme } from "@mui/material/styles";
 import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { Box, InputAdornment, Grid, CircularProgress } from "@mui/material";
 import CommonStyles from "../../components/CommonStyles";
 import CommonIcons from "../../components/CommonIcons";
-import { useGetListCategories } from "../../hooks/category/useGetListCategories";
 import Pagination from "@mui/material/Pagination";
 import {
   createSearchParams,
@@ -17,10 +15,11 @@ import {
 } from "react-router-dom";
 import { RouteBase } from "../../constants/routeUrl";
 import useToggleDialog from "../../hooks/useToggleDialog";
-import { useDeleteCategory } from "../../hooks/category/useDeleteCategory";
-import { useDeleteAllCategories } from "../../hooks/category/useDeleteAllCategories";
 import { showError, showSuccess } from "../../helpers/toast";
 import { isArray } from "lodash";
+import { useGetListColors } from "../../hooks/color/useGetListColors";
+import { useDeleteColor } from "../../hooks/color/useDeleteColor";
+import { useDeleteAllColors } from "../../hooks/color/useDeleteAllColors";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -47,7 +46,7 @@ const useStyles = makeStyles(() => {
       marginRight: "10px",
       backgroundColor: theme.custom.background.button,
     },
-    wrapperListCategory: {
+    wrapperListColor: {
       padding: "0 20px",
     },
     editIcon: {
@@ -72,7 +71,7 @@ const useStyles = makeStyles(() => {
   };
 });
 
-const Category = () => {
+const Color = () => {
   //! State
   const classes = useStyles();
   const navigate = useNavigate();
@@ -81,13 +80,13 @@ const Category = () => {
   const initialValues = {
     search: searchParams?.get("search") || "",
   };
-  const header = ["ID", "Name", "Action"];
+  const header = ["ID", "Color name", "Action"];
   const [initialFilters, setInitialFilters] = useState({
     page: 1,
     limit: 10,
     search: "",
   });
-  const [dataCategory, setDataCategory] = useState([]);
+  const [dataColor, setDataColor] = useState([]);
 
   const page = searchParams?.get("page") || 1;
   const [totalPage, setTotalPage] = useState();
@@ -104,24 +103,24 @@ const Category = () => {
   } = useToggleDialog();
 
   const {
-    data: resListCategory,
+    data: resListColor,
     isLoading: isLoadingList,
     refetch,
-  } = useGetListCategories(initialFilters);
+  } = useGetListColors(initialFilters);
 
-  const { isLoading: isLoadingDelete, mutateAsync: deleteCategory } =
-    useDeleteCategory();
-  const { isLoading: isLoadingDeleteAll, mutateAsync: deleteAllCategories } =
-    useDeleteAllCategories();
+  const { isLoading: isLoadingDelete, mutateAsync: deleteColor } =
+    useDeleteColor();
+  const { isLoading: isLoadingDeleteAll, mutateAsync: deleteAllColors } =
+    useDeleteAllColors();
 
-  const pageCount = !isLoadingList && resListCategory?.data?.results?.pageCount;
+  const pageCount = !isLoadingList && resListColor?.data?.results?.pageCount;
 
   //! Function
   useEffect(() => {
-    if (!isLoadingList && resListCategory?.data?.results?.data !== undefined) {
-      setDataCategory(resListCategory?.data?.results?.data);
+    if (!isLoadingList && resListColor?.data?.results?.data !== undefined) {
+      setDataColor(resListColor?.data?.results?.data);
     }
-  }, [resListCategory]);
+  }, [resListColor]);
 
   useEffect(() => {
     setInitialFilters({
@@ -141,18 +140,18 @@ const Category = () => {
     try {
       if (
         initialFilters.page > 1 &&
-        isArray(dataCategory) &&
-        dataCategory.length === 1
+        isArray(dataColor) &&
+        dataColor.length === 1
       ) {
-        await deleteCategory(idDelete);
+        await deleteColor(idDelete);
         toggleDelete();
-        navigate(`${RouteBase.Category}?page=${initialFilters.page - 1}`);
-        showSuccess("Delete category successfully");
+        navigate(`${RouteBase.Color}?page=${initialFilters.page - 1}`);
+        showSuccess("Delete color successfully");
       } else {
-        await deleteCategory(idDelete);
+        await deleteColor(idDelete);
         await refetch();
         toggleDelete();
-        showSuccess("Delete category successfully");
+        showSuccess("Delete color successfully");
       }
     } catch (error) {
       showError(error.response.data.message);
@@ -161,10 +160,10 @@ const Category = () => {
 
   const handleDeleteAll = async () => {
     try {
-      await deleteAllCategories();
+      await deleteAllColors();
       await refetch();
       toggleDeleteAll();
-      showSuccess("Delete all categories successfully");
+      showSuccess("Delete all colors successfully");
     } catch (error) {
       showError(error.response.data.message);
     }
@@ -176,15 +175,15 @@ const Category = () => {
 
   const renderTableBody = useCallback(
     () =>
-      dataCategory?.map((item, index) => {
+      dataColor?.map((item, index) => {
         return {
           id:
-            dataCategory.indexOf(item) +
+            dataColor.indexOf(item) +
             1 +
-            (resListCategory?.data?.results?.page - 1) * 10,
-          name: (
+            (resListColor?.data?.results?.page - 1) * 10,
+          colorName: (
             <CommonStyles.Typography variant="h4">
-              {item.name}
+              {item.colorName}
             </CommonStyles.Typography>
           ),
           action: (
@@ -193,7 +192,7 @@ const Category = () => {
                 <CommonIcons.Edit
                   className={classes.editIcon}
                   onClick={() =>
-                    navigate(`${RouteBase.Category}/edit/${item?._id}`)
+                    navigate(`${RouteBase.Color}/edit/${item?._id}`)
                   }
                 />
               </Box>
@@ -207,7 +206,7 @@ const Category = () => {
           ),
         };
       }),
-    [dataCategory]
+    [dataColor]
   );
 
   const onSubmit = (values, actions) => {
@@ -287,9 +286,9 @@ const Category = () => {
                         <CommonStyles.Button
                           variant="contained"
                           className={classes.btnAdd}
-                          onClick={() => navigate(RouteBase.CreateCategory)}
+                          onClick={() => navigate(RouteBase.CreateColor)}
                         >
-                          Add category
+                          Add color
                         </CommonStyles.Button>
                         <CommonStyles.Button
                           variant="contained"
@@ -304,9 +303,9 @@ const Category = () => {
                 );
               }}
             </Formik>
-            <Box className={classes.wrapperListCategory}>
+            <Box className={classes.wrapperListColor}>
               <CommonStyles.Table header={header} body={renderTableBody()} />
-              {dataCategory.length > 0 && (
+              {dataColor.length > 0 && (
                 <Box
                   sx={{
                     display: "flex",
@@ -331,8 +330,8 @@ const Category = () => {
                   open={openDelete}
                   toggle={toggleDelete}
                   className={classes.contentModal}
-                  header={"Delete category"}
-                  content={"Do you want to delete this category ?"}
+                  header={"Delete color"}
+                  content={"Do you want to delete this color ?"}
                   footer={
                     <>
                       <CommonStyles.Button
@@ -360,8 +359,8 @@ const Category = () => {
                   open={openDeleteAll}
                   toggle={toggleDeleteAll}
                   className={classes.contentModal}
-                  header={"Delete category"}
-                  content={"Do you want to delete all categories ?"}
+                  header={"Delete color"}
+                  content={"Do you want to delete all colors ?"}
                   footer={
                     <>
                       <CommonStyles.Button
@@ -392,4 +391,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default Color;

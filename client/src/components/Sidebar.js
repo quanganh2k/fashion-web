@@ -61,16 +61,15 @@ const useStyles = makeStyles(() => {
       backgroundColor: "#00adc1",
     },
     sideBar: {
-      position: 'fixed', 
+      position: "fixed",
       zIndex: 1,
-      top: 0 ,
+      top: 0,
       left: 0,
-      overflowX: 'hidden',
-      height: '100%',
-      width: '280px',
+      overflowX: "hidden",
+      height: "100%",
+      width: "280px",
       backgroundColor: "#23282b",
-    
-    }
+    },
   };
 });
 
@@ -136,7 +135,7 @@ const Sidebar = () => {
 
           <li className={classes.listItem}>
             <NavLink
-              to='/3'
+              to={RouteBase.Color}
               className={({ isActive }) =>
                 isActive ? classes.active : classes.link
               }
@@ -153,7 +152,7 @@ const Sidebar = () => {
           </li>
           <li className={classes.listItem}>
             <NavLink
-              to='/4'
+              to={RouteBase.Classify}
               className={({ isActive }) =>
                 isActive ? classes.active : classes.link
               }
@@ -170,7 +169,7 @@ const Sidebar = () => {
           </li>
           <li className={classes.listItem}>
             <NavLink
-              to='/5'
+              to="/5"
               className={({ isActive }) =>
                 isActive ? classes.active : classes.link
               }

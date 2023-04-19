@@ -25,6 +25,12 @@ import EditCategory from "./views/Admin/EditCategory";
 import Size from "./views/Admin/Size";
 import CreateSize from "./views/Admin/CreateSize";
 import EditSize from "./views/Admin/EditSize";
+import Color from "./views/Admin/Color";
+import CreateColor from "./views/Admin/CreateColor";
+import EditColor from "./views/Admin/EditColor";
+import Classify from "./views/Admin/Classify";
+import CreateClassify from "./views/Admin/CreateClassify";
+import EditClassify from "./views/Admin/EditClassify";
 
 const cache = createCache({
   key: "css",
@@ -100,6 +106,36 @@ function App() {
                     exact
                     path={`${RouteBase.EditSize}`}
                     element={<EditSize />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.Color}`}
+                    element={<Color />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.CreateColor}`}
+                    element={<CreateColor />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.EditColor}`}
+                    element={<EditColor />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.Classify}`}
+                    element={<Classify />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.CreateClassify}`}
+                    element={<CreateClassify />}
+                  />
+                   <Route
+                    exact
+                    path={`${RouteBase.EditClassify}`}
+                    element={<EditClassify />}
                   />
                 </Route>
                 {/* <Route element={<AdminRoutes />}>

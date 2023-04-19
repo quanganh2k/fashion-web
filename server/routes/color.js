@@ -127,19 +127,19 @@ router.delete("/", auth, authAdmin, async (req, res) => {
     let deletedColor;
     if (req.query.id) {
       const productColor = await Product.find({
-        "sizeColor.color": req.params.id,
+        "sizeColor.color": req.query.id,
       });
       for (let i = 0; i < productColor.length; i++) {
         const product = productColor[i];
         await Product.findByIdAndUpdate(product._id, {
           $set: {
             sizeColor: product.sizeColor.filter(
-              (item) => item.color.toString() !== req.params.id
+              (item) => item.color.toString() !== req.query.id
             ),
           },
         });
       }
-      deletedColor = await Color.findByIdAndDelete(req.params.id);
+      deletedColor = await Color.findByIdAndDelete(req.query.id);
     } else {
       await Product.deleteMany({});
       deletedColor = await Color.deleteMany({});

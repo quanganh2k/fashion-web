@@ -11,4 +11,10 @@ export const RouteBase = {
   Size: "/admin/size",
   CreateSize: "/admin/size/create",
   EditSize: "/admin/size/edit/:id",
+  Color: "/admin/color",
+  CreateColor: "/admin/color/create",
+  EditColor: "/admin/color/edit/:id",
+  Classify: "/admin/classify",
+  CreateClassify: "/admin/classify/create",
+  EditClassify: "/admin/classify/edit/:id",
 };
