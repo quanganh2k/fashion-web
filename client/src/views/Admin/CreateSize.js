@@ -10,6 +10,8 @@ import CommonStyles from "../../components/CommonStyles";
 import { cloneDeepWith } from "lodash";
 import { showError, showSuccess } from "../../helpers/toast";
 import { useAddSize } from "../../hooks/size/useAddSize";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -52,6 +54,7 @@ const CreateSize = () => {
       .required("Field is required"),
   });
 
+  const queryClient = useQueryClient();
   const { isLoading: isLoadingAdd, mutateAsync: addSize } = useAddSize();
 
   //! Function
@@ -65,6 +68,7 @@ const CreateSize = () => {
         return;
       }
       await addSize(trimValues);
+      await queryClient.refetchQueries([queryKeys.sizes]);
       actions.resetForm();
       showSuccess("Create size successfully");
     } catch (error) {
@@ -110,7 +114,10 @@ const CreateSize = () => {
                         >
                           Product size
                         </CommonStyles.Typography>
-                        <Field component={CommonStyles.TextField} name="productSize" />
+                        <Field
+                          component={CommonStyles.TextField}
+                          name="productSize"
+                        />
                       </Grid>
                       <Grid container item xs={12} md={12}>
                         <CommonStyles.Button

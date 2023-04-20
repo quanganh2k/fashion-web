@@ -13,6 +13,8 @@ import { showError, showSuccess } from "../../helpers/toast";
 import { useGetCategoryDetails } from "../../hooks/category/useGetCategoryDetails";
 import { useParams } from "react-router-dom";
 import { useUpdateCategory } from "../../hooks/category/useUpdateCategory";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -47,6 +49,7 @@ const EditCategory = () => {
   //! State
   const classes = useStyles();
   const params = useParams();
+  const queryClient = useQueryClient();
   const {
     data: resCategoryDetails,
     isLoading: isLoadingDetail,
@@ -78,6 +81,7 @@ const EditCategory = () => {
       }
       await editCategory({ id: params.id, data: trimValues });
       await refetchDetail();
+      await queryClient.refetchQueries([queryKeys.categories]);
       showSuccess("Edit category successfully");
     } catch (error) {
       showError(error.response.data.message);

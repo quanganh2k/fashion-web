@@ -19,6 +19,8 @@ import { useUploadImage } from "../../hooks/uploadImage/useUploadImage";
 import { cloneDeep, cloneDeepWith, flattenDepth } from "lodash";
 import { useUpdateProduct } from "../../hooks/product/useUpdateProduct";
 import { showError, showSuccess } from "../../helpers/toast";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -86,6 +88,7 @@ const EditProduct = () => {
     page: 1,
     limit: 100,
   };
+  const queryClient = useQueryClient()
   const { data: resProductDetails, isLoading: isLoadingDetail, refetch: refetchDetail } =
     useGetProductDetails(params.id, { enabled: !!params.id });
 
@@ -225,6 +228,7 @@ const EditProduct = () => {
 
       await editProduct({ id: params.id, data: trimValues });
       await refetchDetail()
+      await queryClient.refetchQueries([queryKeys.products])
       showSuccess("Edit product successfully");
     } catch (error) {
       showError(error.response.data.message);

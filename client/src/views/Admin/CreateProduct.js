@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { makeStyles } from "@mui/styles";
 import { useTheme } from "@mui/material/styles";
-import { Formik, Field, Form, FieldArray, FastField } from "formik";
+import { Formik, Form, FieldArray, FastField } from "formik";
 import * as Yup from "yup";
 import Sidebar from "../../components/Sidebar";
 import { Box, CircularProgress, Grid } from "@mui/material";
 import Navbar from "../../components/Navbar";
 import CommonStyles from "../../components/CommonStyles";
 import CommonIcons from "../../components/CommonIcons";
-import removeIcon from "../../assets/remove-icon.png";
 import { useGetListCategories } from "../../hooks/category/useGetListCategories";
 import { useGetListClassify } from "../../hooks/classification/useGetListClassify";
 import { useGetListColors } from "../../hooks/color/useGetListColors";
@@ -18,6 +17,8 @@ import { cloneDeep, cloneDeepWith, flattenDepth, isArray } from "lodash";
 import { useAddProduct } from "../../hooks/product/useAddProduct";
 import { showError, showSuccess } from "../../helpers/toast";
 import { useUploadImage } from "../../hooks/uploadImage/useUploadImage";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -80,6 +81,7 @@ const useStyles = makeStyles(() => {
 const CreateProduct = () => {
   //! State
   const classes = useStyles();
+  const queryClient = useQueryClient();
   const filters = {
     page: 1,
     limit: 100,
@@ -211,6 +213,7 @@ const CreateProduct = () => {
         return;
       }
       await addProduct(trimValues);
+      await queryClient.refetchQueries([queryKeys.products]);
       actions.resetForm();
       showSuccess("Create product successfully");
     } catch (error) {

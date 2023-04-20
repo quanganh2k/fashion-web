@@ -10,6 +10,8 @@ import CommonStyles from "../../components/CommonStyles";
 import { useAddCategory } from "../../hooks/category/useAddCategory";
 import { cloneDeepWith } from "lodash";
 import { showError, showSuccess } from "../../helpers/toast";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -51,6 +53,7 @@ const CreateCategory = () => {
       .max(30, "Category name can not exceed 30 characters")
       .required("Field is required"),
   });
+  const queryClient = useQueryClient();
 
   const { isLoading: isLoadingAdd, mutateAsync: addCategory } =
     useAddCategory();
@@ -66,6 +69,7 @@ const CreateCategory = () => {
         return;
       }
       await addCategory(trimValues);
+      await queryClient.refetchQueries([queryKeys.categories]);
       actions.resetForm();
       showSuccess("Create category successfully");
     } catch (error) {

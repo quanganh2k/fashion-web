@@ -17,7 +17,7 @@ mongoose.set("strictQuery", false);
 const connectDB = async () => {
   try {
     await mongoose.connect(
-      "mongodb+srv://quanganhdev:fedev2k123@fashion-shop.laqlqmd.mongodb.net/?retryWrites=true&w=majority",
+      `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@fashion-shop.laqlqmd.mongodb.net/?retryWrites=true&w=majority`,
       {
         useNewUrlParser: true,
       }
@@ -35,12 +35,12 @@ connectDB();
 const PORT = 5000;
 
 const app = express();
-app.use(cors(
-  {
+app.use(
+  cors({
     origin: [`http://localhost:3000`, `https://localhost:3000`],
     credentials: true,
-  }
-));
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -53,7 +53,5 @@ app.use("/api/color", colorRouter);
 app.use("/api/classify", classifyRouter);
 app.use("/api/image", imageRouter);
 app.use("/api/product", productRouter);
-
-
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

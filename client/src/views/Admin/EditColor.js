@@ -7,14 +7,13 @@ import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import { Box, Grid } from "@mui/material";
 import CommonStyles from "../../components/CommonStyles";
-import { useAddCategory } from "../../hooks/category/useAddCategory";
 import { cloneDeepWith } from "lodash";
 import { showError, showSuccess } from "../../helpers/toast";
-import { useGetCategoryDetails } from "../../hooks/category/useGetCategoryDetails";
 import { useParams } from "react-router-dom";
-import { useUpdateCategory } from "../../hooks/category/useUpdateCategory";
 import { useGetColorDetails } from "../../hooks/color/useGetColorDetails";
 import { useUpdateColor } from "../../hooks/color/useUpdateColor";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -49,6 +48,7 @@ const EditColor = () => {
   //! State
   const classes = useStyles();
   const params = useParams();
+  const queryClient = useQueryClient();
   const {
     data: resColorDetails,
     isLoading: isLoadingDetail,
@@ -79,6 +79,7 @@ const EditColor = () => {
       }
       await editColor({ id: params.id, data: trimValues });
       await refetchDetail();
+      await queryClient.refetchQueries([queryKeys.colors]);
       showSuccess("Edit color successfully");
     } catch (error) {
       showError(error.response.data.message);

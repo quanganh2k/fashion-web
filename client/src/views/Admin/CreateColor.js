@@ -10,6 +10,8 @@ import CommonStyles from "../../components/CommonStyles";
 import { cloneDeepWith } from "lodash";
 import { showError, showSuccess } from "../../helpers/toast";
 import { useAddColor } from "../../hooks/color/useAddColor";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -52,6 +54,7 @@ const CreateColor = () => {
       .required("Field is required"),
   });
 
+  const queryClient = useQueryClient()
   const { isLoading: isLoadingAdd, mutateAsync: addColor } = useAddColor();
 
   //! Function
@@ -65,6 +68,7 @@ const CreateColor = () => {
         return;
       }
       await addColor(trimValues);
+      await queryClient.refetchQueries([queryKeys.colors])
       actions.resetForm();
       showSuccess("Create color successfully");
     } catch (error) {

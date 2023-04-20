@@ -15,6 +15,8 @@ import { useParams } from "react-router-dom";
 import { useUpdateCategory } from "../../hooks/category/useUpdateCategory";
 import { useGetClassifyDetails } from "../../hooks/classification/useGetClassifyDetails";
 import { useUpdateClassify } from "../../hooks/classification/useUpdateClassify";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -49,6 +51,7 @@ const EditClassify = () => {
   //! State
   const classes = useStyles();
   const params = useParams();
+  const queryClient = useQueryClient();
   const {
     data: resClassifyDetails,
     isLoading: isLoadingDetail,
@@ -80,6 +83,7 @@ const EditClassify = () => {
       }
       await editClassify({ id: params.id, data: trimValues });
       await refetchDetail();
+      await queryClient.refetchQueries([queryKeys.classify]);
       showSuccess("Edit classify successfully");
     } catch (error) {
       showError(error.response.data.message);

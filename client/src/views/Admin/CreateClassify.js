@@ -11,6 +11,8 @@ import { useAddCategory } from "../../hooks/category/useAddCategory";
 import { cloneDeepWith } from "lodash";
 import { showError, showSuccess } from "../../helpers/toast";
 import { useAddClassify } from "../../hooks/classification/useAddClassify";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -53,6 +55,7 @@ const CreateClassify = () => {
       .required("Field is required"),
   });
 
+  const queryClient = useQueryClient();
   const { isLoading: isLoadingAdd, mutateAsync: addClassify } =
     useAddClassify();
 
@@ -67,6 +70,7 @@ const CreateClassify = () => {
         return;
       }
       await addClassify(trimValues);
+      await queryClient.refetchQueries([queryKeys.classify]);
       actions.resetForm();
       showSuccess("Create classify successfully");
     } catch (error) {

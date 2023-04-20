@@ -15,6 +15,8 @@ import { useParams } from "react-router-dom";
 import { useUpdateCategory } from "../../hooks/category/useUpdateCategory";
 import { useGetSizeDetails } from "../../hooks/size/useGetSizeDetails";
 import { useUpdateSize } from "../../hooks/size/useUpdateSize";
+import { useQueryClient } from "react-query";
+import { queryKeys } from "../../constants/queryKeys";
 
 const useStyles = makeStyles(() => {
   const theme = useTheme();
@@ -49,6 +51,7 @@ const EditSize = () => {
   //! State
   const classes = useStyles();
   const params = useParams();
+  const queryClient = useQueryClient();
   const {
     data: resSizeDetails,
     isLoading: isLoadingDetail,
@@ -79,6 +82,7 @@ const EditSize = () => {
       }
       await editSize({ id: params.id, data: trimValues });
       await refetchDetail();
+      await queryClient.refetchQueries([queryKeys.sizes]);
       showSuccess("Edit size successfully");
     } catch (error) {
       showError(error.response.data.message);
