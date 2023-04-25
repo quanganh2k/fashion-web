@@ -106,6 +106,7 @@ const Color = () => {
     data: resListColor,
     isLoading: isLoadingList,
     refetch,
+    isRefetching
   } = useGetListColors(initialFilters);
 
   const { isLoading: isLoadingDelete, mutateAsync: deleteColor } =
@@ -216,7 +217,7 @@ const Color = () => {
   };
 
   //! Render
-  if (isLoadingList) {
+  if (isLoadingList || isRefetching) {
     return (
       <Box
         sx={{

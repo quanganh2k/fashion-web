@@ -107,6 +107,7 @@ const Category = () => {
     data: resListCategory,
     isLoading: isLoadingList,
     refetch,
+    isRefetching,
   } = useGetListCategories(initialFilters);
 
   const { isLoading: isLoadingDelete, mutateAsync: deleteCategory } =
@@ -217,7 +218,7 @@ const Category = () => {
   };
 
   //! Render
-  if (isLoadingList) {
+  if (isLoadingList || isRefetching) {
     return (
       <Box
         sx={{

@@ -3,10 +3,10 @@ import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useTheme } from "@mui/material/styles";
 import CommonStyles from "./CommonStyles";
-import shoeImage from "../assets/icons8-shoe-96.png";
+import productImage from "../assets/product-icon.png";
 import categoryImage from "../assets/icon-category.png";
 import colorImage from "../assets/icons8-color-swatch-48.png";
-import sizeImage from "../assets/icon-size.png";
+import sizeImage from "../assets/icons8-size-48.png";
 import orderImage from "../assets/icons8-purchase-order.png";
 import genderImage from "../assets/icons8-gender-64.png";
 import { NavLink } from "react-router-dom";
@@ -95,8 +95,8 @@ const Sidebar = () => {
               }
             >
               <Box className={classes.wrapperItem}>
-                <img src={shoeImage} alt="Shoe icon" className={classes.icon} />
-                <div className={classes.textListItem}>Shoe</div>
+                <img src={productImage} alt="Product icon" className={classes.icon} />
+                <div className={classes.textListItem}>Product</div>
               </Box>
             </NavLink>
           </li>

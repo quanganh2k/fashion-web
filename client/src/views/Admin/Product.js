@@ -147,6 +147,7 @@ const Product = () => {
     data: resListProducts,
     isLoading: isLoadingList,
     refetch,
+    isRefetching
   } = useGetListProducts(initialFilters);
   const { isLoading: isLoadingDelete, mutateAsync: deleteProduct } =
     useDeleteProduct();
@@ -346,7 +347,7 @@ const Product = () => {
   );
 
   //! Render
-  if (isLoadingList) {
+  if (isLoadingList || isRefetching) {
     return (
       <Box
         sx={{
@@ -435,7 +436,7 @@ const Product = () => {
                           className={classes.btnAdd}
                           onClick={() => navigate(RouteBase.CreateProduct)}
                         >
-                          Add shoe
+                          Add product
                         </CommonStyles.Button>
                         <CommonStyles.Button
                           variant="contained"

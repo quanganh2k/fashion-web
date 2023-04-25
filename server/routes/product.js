@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const authAdmin = require("../middleware/authAdmin");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 
 const Product = require("../models/Product");
 
@@ -12,6 +14,7 @@ router.get("/", async (req, res) => {
     const limit = parseInt(req.query.limit);
     const name = req.query.search;
     const sortBy = req.query.sortBy;
+    const classify = req.query.classify;
 
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
@@ -21,6 +24,9 @@ router.get("/", async (req, res) => {
     const filters = {};
     if (name) {
       filters.name = { $regex: name, $options: "i" };
+    }
+    if (classify) {
+      filters.classify = ObjectId(classify);
     }
 
     const allData = await Product.find(filters).exec();
@@ -67,6 +73,9 @@ router.get("/", async (req, res) => {
     results.data = await Product.aggregate([
       {
         $match: { name: { $regex: name, $options: "i" } },
+      },
+      {
+        $match: classify ? { classify: ObjectId(classify)  } : {},
       },
       {
         $lookup: {

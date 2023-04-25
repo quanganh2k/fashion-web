@@ -107,6 +107,7 @@ const Size = () => {
     data: resListSize,
     isLoading: isLoadingList,
     refetch,
+    isRefetching
   } = useGetListSizes(initialFilters);
 
   const { isLoading: isLoadingDelete, mutateAsync: deleteSize } =
@@ -217,7 +218,7 @@ const Size = () => {
   };
 
   //! Render
-  if (isLoadingList) {
+  if (isLoadingList || isRefetching) {
     return (
       <Box
         sx={{

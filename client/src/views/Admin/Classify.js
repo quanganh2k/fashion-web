@@ -106,6 +106,7 @@ const Classify = () => {
     data: resListClassify,
     isLoading: isLoadingList,
     refetch,
+    isRefetching
   } = useGetListClassify(initialFilters);
 
   const { isLoading: isLoadingDelete, mutateAsync: deleteClassify } =
@@ -216,7 +217,7 @@ const Classify = () => {
   };
 
   //! Render
-  if (isLoadingList) {
+  if (isLoadingList || isRefetching) {
     return (
       <Box
         sx={{
