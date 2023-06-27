@@ -9,7 +9,7 @@ import Navbar from "../../components/Navbar";
 import CommonStyles from "../../components/CommonStyles";
 import CommonIcons from "../../components/CommonIcons";
 import { useGetListCategories } from "../../hooks/category/useGetListCategories";
-import { useGetListClassify } from "../../hooks/classification/useGetListClassify";
+import { useGetClassifyQuery } from "../../hooks/classification/useGetClassifyQuery";
 import { useGetListColors } from "../../hooks/color/useGetListColors";
 import { useGetListSizes } from "../../hooks/size/useGetListSizes";
 import FilePreview from "../../components/CommonStyles/FilePreview";
@@ -126,7 +126,7 @@ const CreateProduct = () => {
     useGetListCategories(filters);
 
   const { data: resClassify, isLoading: isLoadingClassify } =
-    useGetListClassify(filters);
+    useGetClassifyQuery(filters);
 
   const { data: resColor, isLoading: isLoadingColor } =
     useGetListColors(filters);

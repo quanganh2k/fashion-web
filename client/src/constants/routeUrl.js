@@ -1,4 +1,5 @@
 export const RouteBase = {
+  Homepage: "/",
   Login: "/login",
   Cart: "/cart",
   Product: "/admin/product",

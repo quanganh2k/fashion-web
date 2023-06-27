@@ -69,7 +69,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //! API create category
-router.post("/", auth, authAdmin, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
@@ -96,13 +96,20 @@ router.post("/", auth, authAdmin, async (req, res) => {
 });
 
 //! API Update category
-router.put("/:id", auth, authAdmin, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { name } = req.body;
     if (!name) {
       return res
         .status(400)
         .json({ success: false, message: "You need to fill full information" });
+    }
+
+    const category = await Category.findOne({ name });
+    if (category) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Category name already exists" });
     }
 
     const updatedCategory = await Category.findByIdAndUpdate(
@@ -122,7 +129,7 @@ router.put("/:id", auth, authAdmin, async (req, res) => {
 });
 
 //! API Delete category
-router.delete("/", auth, authAdmin, async (req, res) => {
+router.delete("/", async (req, res) => {
   try {
     let deletedCategory;
     if (req.query.id) {

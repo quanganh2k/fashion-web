@@ -117,3 +117,11 @@ export const decodeRefreshToken = (refreshTokenEncoded = ``) => {
 //   const search = window.location.search;
 //   return querystring.parse(search);
 // };
+
+export const delay = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('');
+    }, ms)
+  })
+}

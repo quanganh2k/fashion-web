@@ -10,4 +10,6 @@ export const queryKeys = {
   sizeDetails: "sizeDetails",
   colorDetails: "colorDetails",
   classifyDetails: "classifyDetails",
+  productsInfinite: "productsInfinite",
+  classifyCustom: "classifyCustom",
 };

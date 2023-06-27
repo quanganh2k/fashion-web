@@ -3,7 +3,20 @@ import { PRODUCT_URL } from "../constants/api";
 
 class ProductServices {
   getListProducts(params) {
+    console.log("params111", params);
     return httpServices.get(PRODUCT_URL, { params: params.queryKey[1] });
+  }
+
+  getProducts(params) {
+    return httpServices.get(PRODUCT_URL, { params: params });
+  }
+
+  getProductsCustom(params) {
+    return httpServices.get(PRODUCT_URL, { params: params });
+  }
+
+  getInfiniteList(params) {
+    return httpServices.get(PRODUCT_URL, { params: params });
   }
 
   getProductDetails(params) {
@@ -23,7 +36,7 @@ class ProductServices {
     return httpServices.delete(`${PRODUCT_URL}?listId[]=${id}`);
   }
   deleteAllProducts() {
-    return httpServices.delete(PRODUCT_URL)
+    return httpServices.delete(PRODUCT_URL);
   }
 }
 

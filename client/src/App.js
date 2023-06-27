@@ -11,7 +11,7 @@ import { AuthProvider } from "./providers/authProviders";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { QueryClient, QueryClientProvider } from "react-query";
-import Cart from "./views/User/Cart";
+import Cart from "./views/User/Cart/index";
 import UserRoutes from "./utils/UserRoutes";
 import AdminRoutes from "./utils/AdminRoutes";
 import Register from "./views/Register";
@@ -31,6 +31,9 @@ import EditColor from "./views/Admin/EditColor";
 import Classify from "./views/Admin/Classify";
 import CreateClassify from "./views/Admin/CreateClassify";
 import EditClassify from "./views/Admin/EditClassify";
+import Homepage from "./views/User/Homepage";
+import { useGetListClassify } from "./hooks/classification/useGetListClassify";
+import Loader from "./components/Loader";
 
 const cache = createCache({
   key: "css",
@@ -45,113 +48,100 @@ const queryClient = new QueryClient({
   },
 });
 
+const filtersClassify = {
+  page: 1,
+  limit: 12,
+};
+
+const AppRouteSwitcher = () => {
+  //* Get all data that use global on web
+  const { isLoading } = useGetListClassify(filtersClassify);
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  return (
+    <Router>
+      <Routes>
+        <Route exact path={`${RouteBase.Login}`} element={<Login />} />
+        <Route exact path={`${RouteBase.Register}`} element={<Register />} />
+        <Route exact path={RouteBase.Homepage} element={<Homepage />} />
+
+        {/* <Route exact path={RouteBase.Homepage} element={<HomepageRedo />} /> */}
+
+        <Route element={<AdminRoutes />}>
+          <Route exact path={`${RouteBase.Product}`} element={<Product />} />
+          <Route
+            exact
+            path={`${RouteBase.CreateProduct}`}
+            element={<CreateProduct />}
+          />
+
+          <Route
+            exact
+            path={`${RouteBase.EditProduct}`}
+            element={<EditProduct />}
+          />
+          <Route exact path={`${RouteBase.Category}`} element={<Category />} />
+          <Route
+            exact
+            path={`${RouteBase.CreateCategory}`}
+            element={<CreateCategory />}
+          />
+          <Route
+            exact
+            path={`${RouteBase.EditCategory}`}
+            element={<EditCategory />}
+          />
+          <Route exact path={`${RouteBase.Size}`} element={<Size />} />
+          <Route
+            exact
+            path={`${RouteBase.CreateSize}`}
+            element={<CreateSize />}
+          />
+          <Route exact path={`${RouteBase.EditSize}`} element={<EditSize />} />
+          <Route exact path={`${RouteBase.Color}`} element={<Color />} />
+          <Route
+            exact
+            path={`${RouteBase.CreateColor}`}
+            element={<CreateColor />}
+          />
+          <Route
+            exact
+            path={`${RouteBase.EditColor}`}
+            element={<EditColor />}
+          />
+          <Route exact path={`${RouteBase.Classify}`} element={<Classify />} />
+          <Route
+            exact
+            path={`${RouteBase.CreateClassify}`}
+            element={<CreateClassify />}
+          />
+          <Route
+            exact
+            path={`${RouteBase.EditClassify}`}
+            element={<EditClassify />}
+          />
+        </Route>
+
+        <Route element={<UserRoutes />}>
+          <Route exact path={`${RouteBase.Cart}`} element={<Cart />} />
+        </Route>
+
+        <Route path="*" element={<Page404 />}></Route>
+      </Routes>
+    </Router>
+  );
+};
+
 function App() {
   return (
     <CacheProvider value={cache}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <AuthProvider>
-            <Router>
-              <Routes>
-                <Route exact path={`${RouteBase.Login}`} element={<Login />} />
-                <Route
-                  exact
-                  path={`${RouteBase.Register}`}
-                  element={<Register />}
-                />
-
-                <Route element={<AdminRoutes />}>
-                  <Route
-                    exact
-                    path={`${RouteBase.Product}`}
-                    element={<Product />}
-                  />
-                  <Route
-                    exact
-                    path={`${RouteBase.CreateProduct}`}
-                    element={<CreateProduct />}
-                  />
-
-                  <Route
-                    exact
-                    path={`${RouteBase.EditProduct}`}
-                    element={<EditProduct />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.Category}`}
-                    element={<Category />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.CreateCategory}`}
-                    element={<CreateCategory />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.EditCategory}`}
-                    element={<EditCategory />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.Size}`}
-                    element={<Size />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.CreateSize}`}
-                    element={<CreateSize />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.EditSize}`}
-                    element={<EditSize />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.Color}`}
-                    element={<Color />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.CreateColor}`}
-                    element={<CreateColor />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.EditColor}`}
-                    element={<EditColor />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.Classify}`}
-                    element={<Classify />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.CreateClassify}`}
-                    element={<CreateClassify />}
-                  />
-                   <Route
-                    exact
-                    path={`${RouteBase.EditClassify}`}
-                    element={<EditClassify />}
-                  />
-                </Route>
-                {/* <Route element={<AdminRoutes />}>
-                  <Route
-                    exact
-                    path={`${RouteBase.CreateProduct}`}
-                    element={<CreateProduct />}
-                  />
-                </Route> */}
-                <Route element={<UserRoutes />}>
-                  <Route exact path={`${RouteBase.Cart}`} element={<Cart />} />
-                </Route>
-
-                <Route path="*" element={<Page404 />}></Route>
-              </Routes>
-            </Router>
+            <AppRouteSwitcher />
             <ToastContainer
               position="top-right"
               autoClose="3000"

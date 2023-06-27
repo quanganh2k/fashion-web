@@ -17,7 +17,7 @@ import { RouteBase } from "../../constants/routeUrl";
 import useToggleDialog from "../../hooks/useToggleDialog";
 import { showError, showSuccess } from "../../helpers/toast";
 import { isArray } from "lodash";
-import { useGetListClassify } from "../../hooks/classification/useGetListClassify";
+import { useGetClassifyQuery } from "../../hooks/classification/useGetClassifyQuery";
 import { useDeleteClassify } from "../../hooks/classification/useDeleteClassify";
 import { useDeleteAllClassify } from "../../hooks/classification/useDeleteAllClassify";
 
@@ -107,7 +107,7 @@ const Classify = () => {
     isLoading: isLoadingList,
     refetch,
     isRefetching
-  } = useGetListClassify(initialFilters);
+  } = useGetClassifyQuery(initialFilters);
 
   const { isLoading: isLoadingDelete, mutateAsync: deleteClassify } =
     useDeleteClassify();

@@ -12,7 +12,7 @@ import CommonStyles from "../../components/CommonStyles";
 import CommonIcons from "../../components/CommonIcons";
 import FilePreview from "../../components/CommonStyles/FilePreview";
 import { useGetListCategories } from "../../hooks/category/useGetListCategories";
-import { useGetListClassify } from "../../hooks/classification/useGetListClassify";
+import { useGetClassifyQuery } from "../../hooks/classification/useGetClassifyQuery";
 import { useGetListColors } from "../../hooks/color/useGetListColors";
 import { useGetListSizes } from "../../hooks/size/useGetListSizes";
 import { useUploadImage } from "../../hooks/uploadImage/useUploadImage";
@@ -134,7 +134,7 @@ const EditProduct = () => {
     useGetListCategories(filters);
 
   const { data: resClassify, isLoading: isLoadingClassify } =
-    useGetListClassify(filters);
+    useGetClassifyQuery(filters);
 
   const { data: resColor, isLoading: isLoadingColor } =
     useGetListColors(filters);

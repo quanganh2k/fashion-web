@@ -5,6 +5,11 @@ class ClassificationServices {
   getListClassification(params) {
     return httpServices.get(CLASSIFICATION_URL, { params: params.queryKey[1] });
   }
+
+  getListClassify(params) {
+    return httpServices.get(CLASSIFICATION_URL, { params });
+  } 
+
   getClassifyDetails(params) {
     return httpServices.get(`${CLASSIFICATION_URL}/${params.queryKey[1]}`);
   }
