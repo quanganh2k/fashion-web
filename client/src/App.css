@@ -27,6 +27,7 @@
     left: 0;
     border-radius: 4px;
     animation: jump7456 0.5s linear infinite;
+    /* color:  */
   }
   
   @keyframes jump7456 {

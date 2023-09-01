@@ -19,9 +19,15 @@ export const useGetListClassify = (params) => {
         setIsLoading(true);
         const response = await classificationServices.getListClassify(params);
         if (shouldSetData) {
+          const listClassify = response?.data?.results.data || [];
+          const classifyWomen = listClassify.find((el) => el.name === "Women");
+          const otherClassify = listClassify.filter(
+            (el) => el.name !== classifyWomen.name
+          );
           const nextTab = [
             { _id: "", name: "All" },
-            ...(response?.data?.results.data || []),
+            classifyWomen,
+            ...otherClassify,
           ];
           setData(nextTab);
         }
@@ -35,7 +41,7 @@ export const useGetListClassify = (params) => {
     })();
 
     return () => {
-      shouldSetData = true;
+      shouldSetData = false;
     };
   }, [params]);
 

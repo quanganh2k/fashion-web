@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CommonStyles from "./CommonStyles";
 import { Box, Grid } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -14,6 +14,8 @@ import { useAuth } from "../hooks/authentication/useAuthentication";
 import authServices from "../services/authServices";
 import { isEmpty } from "lodash";
 import { RouteBase } from "../constants/routeUrl";
+import SearchBar from "../views/User/Homepage/Components/SearchBar";
+import { useGet, useSave } from "../store/useCached";
 
 const useStyles = makeStyles((theme) => {
   return {
@@ -175,12 +177,13 @@ const Header = () => {
   //! State
   const classes = useStyles();
   const auth = useAuth();
-  const { isLogged, userInfo, logout } = auth;
+  const { isLogged, logout } = auth;
   const navigate = useNavigate();
-  const infoStorage = authServices.getUserLocalStorage()
+  const infoStorage = authServices.getUserLocalStorage();
+  const [open, setOpen] = useState(false);;
+  const [isFocus, setIsFocus] = useState(false);
 
-
-  //!Function
+  //! Function
   const handleLogout = async () => {
     await logout();
     const response = authServices.getUserLocalStorage();
@@ -189,9 +192,20 @@ const Header = () => {
     }
   };
 
+  const handleClose = () => {
+    setIsFocus(false)
+    setOpen(false);
+  };
+
   //! Render
   return (
     <>
+      <SearchBar
+        open={open}
+        onClose={() => handleClose()}
+        isFocus={isFocus}
+        setIsFocus={setIsFocus}
+      />
       <Box className={classes.headerContainer}>
         <Box className={classes.headerLeft}>
           <Box className={classes.headerWithIcons}>
@@ -247,7 +261,10 @@ const Header = () => {
         </Box>
         <Box className={classes.headerCart}>
           <Box>
-            <SearchIcon className={classes.headerCartIcon} />
+            <SearchIcon
+              className={classes.headerCartIcon}
+              onClick={() => setOpen(true)}
+            />
           </Box>
 
           <Box className={classes.wrapperLoginIcon}>

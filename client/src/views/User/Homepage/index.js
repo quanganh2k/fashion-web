@@ -1,4 +1,4 @@
-import React, {  useEffect } from "react";
+import React, { useEffect } from "react";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import { makeStyles } from "@mui/styles";
@@ -17,7 +17,7 @@ import {
   createSearchParams,
 } from "react-router-dom";
 import { RouteBase } from "../../../constants/routeUrl";
-import { useGet } from "../../../store/useCached";
+import { useGet, useSave } from "../../../store/useCached";
 import { queryKeys } from "../../../constants/queryKeys";
 import ProductContent from "./Components/ProductContent";
 
@@ -78,10 +78,12 @@ const HomepageLayout = () => {
   const tabOnUrl = searchParams.get("tab");
   const navigate = useNavigate();
   const location = useLocation();
+  const save = useSave();
 
   //! Function
   const handleChangeTab = (item) => {
-    setSearchParams(createSearchParams({ tab: item.name }));
+    save("isOnSearch", false);
+    setSearchParams(createSearchParams({ tab: item.name, search: "" }));
   };
 
   useEffect(() => {

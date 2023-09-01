@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import productServices from "../../services/productServices";
 
 const useGetProducts = (filters) => {
@@ -9,8 +9,32 @@ const useGetProducts = (filters) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
 
-  console.log("dataInHoooks", data);
-  console.log("lolololo", filters);
+  console.log("datat",data)
+
+  const parseResponse = useCallback(
+    (response) => {
+      //* If page === 1 -> setData(response.data);
+      //* If page > 1 -> setData(prev => [...prev, ...response.data])
+
+      const products = response?.data?.results?.data;
+      const totalPage = response?.data?.results?.pageCount;
+
+      if (filters.page === 1) {
+        setData(products);
+        setIsLoading(false);
+      } else {
+        setData((prevData) => [...prevData, ...products]);
+        setIsLoadingMore(false);
+      }
+
+      if (filters.page < totalPage) {
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+    },
+    [filters.page]
+  );
 
   //! Function
   const refetch = async () => {
@@ -24,7 +48,7 @@ const useGetProducts = (filters) => {
       } else {
         setHasMore(false);
       }
-      setData((prev) => prev.concat(products));
+      setData((prev) => [...prev, ...products]);
       setIsLoading(false);
     } catch (error) {
       console.log("error", error);
@@ -36,33 +60,24 @@ const useGetProducts = (filters) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
-        if (data && data.length >= 12) {
+      if (filters.page === 1) {
+          setIsLoading(true);
+        } else {
           setIsLoadingMore(true);
         }
+
         const response = await productServices.getProducts(filters);
-        console.log("response", response);
-        console.log("pro", data);
-        const products = response?.data?.results?.data;
-        const totalPage = response?.data?.results?.pageCount;
-        if (filters.page < totalPage) {
-          setHasMore(true);
-        } else {
-          setHasMore(false);
-        }
-        // setData((prev) => prev.concat(products));
-        setData((prev) => [...prev, ...products]);
-        setIsLoading(false);
-        setIsLoadingMore(false);
+        parseResponse(response);
       } catch (error) {
-        console.log("error", error);
+        setError(error);
         setIsLoading(false);
         setHasMore(false);
-        setIsLoading(false);
+        setIsLoadingMore(false);
       }
     };
+
     fetchData();
-  }, [filters]);
+  }, [filters, parseResponse]);
 
   //! Render
   return {

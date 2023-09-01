@@ -1,12 +1,18 @@
 import { cloneDeep } from "lodash";
-import React, { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useGet, useSave } from "../store/useCached";
 
-const useFiltersHandler = (initialFilters) => {
+const useFiltersHandler = (initialFilters, { filterKey = "" } = {}) => {
   //! State
   const [filters, setFilters] = useState(initialFilters);
   const [tabActive, setTabActive] = useState("All");
+  const save = useSave();
 
-  console.log("renderFilters", initialFilters, filters, tabActive);
+  useEffect(() => {
+    if (filterKey) {
+      save(filterKey, setFilters);
+    }
+  }, [save, filterKey]);
 
   //! Function
   const increasePage = useCallback(() => {
@@ -19,32 +25,15 @@ const useFiltersHandler = (initialFilters) => {
     });
   }, []);
 
-  const changeTab = useCallback((tab, listTabs) => {
-    console.log("__changeTab", tab);
-    setTabActive(tab);
-    setFilters((prev) => {
-      const nextFilters = cloneDeep(prev);
-      const classifySelected = listTabs.find((el) => el.name === tab);
-      nextFilters["page"] = 1;
-      if (tab === "All") {
-        nextFilters["classify"] = "";
-      } else {
-        nextFilters["classify"] = classifySelected._id;
-      }
-      return nextFilters;
-    });
-  }, []);
-
-  // useEffect(() => {
-  //   setTabActive(tab)
-  // },[])
+  useEffect(() => {
+    setFilters(initialFilters);
+  }, [initialFilters]);
 
   //! Render
   return {
     filters,
     setFilters,
     increasePage,
-    changeTab,
     tabActive,
     setTabActive,
   };

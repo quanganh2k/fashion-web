@@ -112,11 +112,14 @@ const TextField = (props) => {
     afterOnChange,
     rows,
     InputProps,
+    onClick,
+    onChangeCustomize,
+    onBlur,
     ...rest
   } = props;
   const [showPassword, setShowPassword] = React.useState(false);
-  const { onChange, onBlur, name, value } = field || {};
-  const { errors, touched } = form || {};
+  const { onChange, name, value } = field || {};
+  const { errors, touched, values } = form || {};
 
   const isTouched = getIn(touched, name);
   const errorMessage = getIn(errors, name);
@@ -138,11 +141,20 @@ const TextField = (props) => {
   };
 
   const handleChange = (e) => {
+    if(onChangeCustomize) {
+      onChangeCustomize(e)
+      return
+    }
     onChange && onChange(e);
     if (afterOnChange) {
       afterOnChange(e);
     }
   };
+
+  const handleBlur = (e) => {
+    !!field?.onBlur && field.onBlur(e);
+    !!onBlur && onBlur(e);
+  }
 
   // !Render
   return (
@@ -155,17 +167,18 @@ const TextField = (props) => {
 
       <TextFieldMui
         {...rest}
+        onClick={onClick}
         maxRows={25}
         variant="outlined"
         name={name}
         label={labelMui}
         onKeyDown={onKeyDown}
-        onFocus={onFocus}
         value={value}
         size={size}
         fullWidth={fullWidth}
         sx={{ width: `${width}` }}
-        onBlur={onBlur}
+        onFocus={onFocus}
+        onBlur={handleBlur}
         className={classNames(
           props.multiline ? classes.textFieldMulti : classes.textField,
           showHidePassword ? classes.passwordInput : classes.textField,

@@ -11,18 +11,25 @@ const ProductContent = () => {
   //! State
   const [searchParams] = useSearchParams();
   const tabOnUrl = searchParams.get("tab");
+  const search = searchParams.get("search");
   const dataClassify = useGet(queryKeys.classify);
-  const initialFilters = useMemo(
-    () => ({
+  console.log("caca",dataClassify)
+  const initialFilters = useMemo(() => {
+    return {
       page: 1,
       limit: 12,
       classify:
         (dataClassify || [])?.find((el) => el.name === tabOnUrl)?._id || "",
-      search: "",
-    }),
-    [dataClassify, tabOnUrl]
-  );
-  const { filters, increasePage } = useFiltersHandler(initialFilters);
+      search: search || "",
+    };
+  }, [dataClassify, tabOnUrl, search]);
+
+  
+  console.log("acacac",initialFilters)
+
+  const { filters, increasePage } = useFiltersHandler(initialFilters, {
+    filterKey: 'product-list-filters'
+  });
   const { data, hasMore, isLoading, isLoadingMore } = useGetProducts(filters);
 
   //! Function
